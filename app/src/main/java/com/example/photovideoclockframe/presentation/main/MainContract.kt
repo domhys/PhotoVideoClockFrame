@@ -1,19 +1,18 @@
 package com.example.photovideoclockframe.presentation.main
 
 import android.content.ContentResolver
-import android.net.Uri
-import com.example.photovideoclockframe.presentation.BasePresenter
-import com.example.photovideoclockframe.presentation.BaseView
+import com.example.photovideoclockframe.presentation.IBasePresenter
+import com.example.photovideoclockframe.presentation.IBaseView
 
 interface MainContract {
 
-    interface View : BaseView<Presenter> {
+    interface View : IBaseView<Presenter> {
         val resolver: ContentResolver
         fun setCurrentTime()
-        fun loadNewImage(path: String)
+        fun loadNewMedia(path: String, mediaType: MEDIA_TYPE)
     }
 
-    interface Presenter: BasePresenter {
+    interface Presenter: IBasePresenter {
         fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
     }
 }

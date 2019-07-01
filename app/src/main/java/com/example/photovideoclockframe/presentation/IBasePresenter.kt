@@ -1,7 +1,6 @@
 package com.example.photovideoclockframe.presentation
 
-interface BasePresenter {
-
+interface IBasePresenter {
     fun onBind()
     fun onDestroy()
 }

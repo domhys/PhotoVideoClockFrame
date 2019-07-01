@@ -1,61 +1,60 @@
 package com.example.photovideoclockframe.presentation.main
 
-import android.util.Log
+import com.example.photovideoclockframe.presentation.base.BasePresenter
+import com.example.photovideoclockframe.utility.permissions.MediaPathLoader
 import com.example.photovideoclockframe.utility.permissions.PermissionsManager
 import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import java.util.concurrent.TimeUnit
-import android.provider.MediaStore
-import com.bumptech.glide.Glide
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-
+import java.util.concurrent.TimeUnit
 
 class MainPresenter(
     private val mainView: MainContract.View,
-    private val permissionsManager: PermissionsManager
-) : MainContract.Presenter {
+    private val permissionsManager: PermissionsManager,
+    private val mediaPathLoader: MediaPathLoader
+) : BasePresenter(), MainContract.Presenter {
 
-    private val compositeDisposable = CompositeDisposable()
+    private val mediaPaths = mutableListOf<Pair<String,MEDIA_TYPE>>()
+    private var clockTicking = false
+    private var imagesChanging = false
 
     override fun onBind() {
         mainView.setCurrentTime()
         updateClockEverySecond()
-        doOrRequestReadPermissions { loadImagesPaths() } //TODO show toast if user doesn't grant permission
+        doOrRequestReadPermissions { loadImages() } //TODO show toast if user doesn't grant permission
     }
 
     private fun updateClockEverySecond() {
-        compositeDisposable.add(
+        if (clockTicking) return
+        register(
             Observable.interval(1, TimeUnit.SECONDS)
                 .subscribe({ mainView.setCurrentTime() }, {})
         )
+        clockTicking = true
     }
 
-    override fun onDestroy() {
-        compositeDisposable.clear()
+    private fun loadImages() {
+        loadImagesPaths()
+        initiateMediaChanges()
     }
 
     private fun loadImagesPaths() {
-        val galleryImageUrls: ArrayList<String> = ArrayList()
-        val columns = arrayOf(MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID)//get all columns of type images
-        val orderBy = MediaStore.Images.Media.DATE_TAKEN//order data by date
-        val cursor = mainView.resolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,columns,null,null,orderBy)
-        while (cursor?.moveToNext() == true) {
-            galleryImageUrls.add(cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA)))
-        }
-        galleryImageUrls.reverse()
-        cursor?.close()
-        var iterator = 0
-        compositeDisposable.add(
-        Observable.interval(2, TimeUnit.SECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                mainView.loadNewImage(galleryImageUrls[iterator])
-                iterator = (iterator + 1) % galleryImageUrls.size
-            },{
-                it.printStackTrace()
-            })
+        mediaPaths.addAll(mediaPathLoader.loadMediaPaths(mainView.resolver))
+    }
+
+    private fun initiateMediaChanges() {
+        if (imagesChanging) return
+        register(
+            Observable.interval(DEFAULT_MEDIA_CHANGE_INTERVAL_SECONDS, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    mediaPaths[(it % mediaPaths.size).toInt()].let { media ->
+                        mainView.loadNewMedia(media.first, media.second)
+                    }
+                }, {
+                    it.printStackTrace()
+                })
         )
+        imagesChanging = true
     }
 
     private inline fun doOrRequestReadPermissions(action: () -> Unit) {
@@ -67,10 +66,13 @@ class MainPresenter(
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (permissionsManager.readExternalStorageGranted()) loadImagesPaths()
+        if (permissionsManager.readExternalStorageGranted()) loadImages()
     }
 
     companion object {
         private const val REQUEST_READ_PERMISSION_CODE = 412
+        private const val DEFAULT_MEDIA_CHANGE_INTERVAL_SECONDS = 2L
     }
 }
+
+enum class MEDIA_TYPE { PHOTO, VIDEO }

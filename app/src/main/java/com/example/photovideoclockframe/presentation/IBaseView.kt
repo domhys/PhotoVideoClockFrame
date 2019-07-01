@@ -1,5 +1,5 @@
 package com.example.photovideoclockframe.presentation
 
-interface BaseView<T> {
+interface IBaseView<T> {
     val presenter: T
 }
