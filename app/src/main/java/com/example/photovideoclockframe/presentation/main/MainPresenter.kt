@@ -71,7 +71,7 @@ class MainPresenter(
 
     companion object {
         private const val REQUEST_READ_PERMISSION_CODE = 412
-        private const val DEFAULT_MEDIA_CHANGE_INTERVAL_SECONDS = 2L
+        private const val DEFAULT_MEDIA_CHANGE_INTERVAL_SECONDS = 6L
     }
 }
 
