@@ -6,14 +6,14 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
-class Permissions(private val activity: Activity) {
+class PermissionsManager(private val activity: Activity) {
 
     fun isGranted(permission: String): Boolean {
         return ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED
     }
 
     fun requestReadExternalStoragePermission(requestCode: Int) {
-        requestPermissions(Permissions.READ_EXTERNAL_STORAGE_PERMISSION, requestCode)
+        requestPermissions(READ_EXTERNAL_STORAGE_PERMISSION, requestCode)
     }
 
     fun requestPermissions(permission: String, requestCode: Int) {
