@@ -1,15 +1,23 @@
 package com.example.photovideoclockframe.presentation.main
 
 import android.content.ContentResolver
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.photovideoclockframe.R
 import com.example.photovideoclockframe.utility.permissions.PermissionsManager
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
+import android.graphics.Matrix
+
 
 //TODO extract to BASE
 class MainActivity : AppCompatActivity(), MainContract.View {
@@ -33,9 +41,26 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         Glide.with(this)
             .asBitmap()
             .load(File(path))
-            .optionalCenterCrop()
-            .transition(BitmapTransitionOptions.withCrossFade(3000))
-            .into(appCompatImageView)
+            .transition(BitmapTransitionOptions.withCrossFade(1000))
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(object:CustomTarget<Bitmap>() {
+                override fun onLoadCleared(placeholder: Drawable?) {}
+
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    if (resource.height > resource.width) {
+                        appCompatImageView.setImageBitmap(rotateBitmap(resource, -90f))
+                    } else {
+                        appCompatImageView.setImageBitmap(resource)
+                    }
+                }
+
+            })
+    }
+
+    fun rotateBitmap(source: Bitmap, angle: Float): Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(angle)
+        return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
     }
 
     override fun setCurrentTime() {

@@ -47,7 +47,7 @@ class MainPresenter(
         cursor?.close()
         var iterator = 0
         compositeDisposable.add(
-        Observable.interval(6, TimeUnit.SECONDS)
+        Observable.interval(2, TimeUnit.SECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 mainView.loadNewImage(galleryImageUrls[iterator])
