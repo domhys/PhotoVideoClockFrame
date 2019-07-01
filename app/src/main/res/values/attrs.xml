@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FrontAnalogClock">
+        <attr name="hourRotation" format="float" />
+        <attr name="minuteRotation" format="float" />
+        <attr name="secondRotation" format="float" />
+    </declare-styleable>
+</resources>
