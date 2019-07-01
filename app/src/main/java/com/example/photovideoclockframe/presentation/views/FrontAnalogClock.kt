@@ -1,8 +1,10 @@
-package com.example.photovideoclockframe
+package com.example.photovideoclockframe.presentation.views
 
 import android.content.Context
 import android.util.AttributeSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import com.example.photovideoclockframe.R
+import com.example.photovideoclockframe.presentation.extensions.extractAttributes
 import kotlinx.android.synthetic.main.front_analog_clock.view.*
 import java.util.*
 

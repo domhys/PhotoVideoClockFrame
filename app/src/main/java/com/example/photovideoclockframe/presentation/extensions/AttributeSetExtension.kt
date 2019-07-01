@@ -1,4 +1,4 @@
-package com.example.photovideoclockframe
+package com.example.photovideoclockframe.presentation.extensions
 
 import android.content.Context
 import android.content.res.TypedArray
