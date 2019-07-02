@@ -35,19 +35,31 @@ class MainActivity : BaseView<MainContract.Presenter>(), MainContract.View {
     }
 
     override fun loadNewMedia(path: String, mediaType: MEDIA_TYPE) {
+        stopMediaPlayer()
+        if (mediaType == MEDIA_TYPE.PHOTO) {
+            loadPhoto(path)
+        } else {
+           loadVideo(path)
+        }
+    }
+
+    private fun stopMediaPlayer() {
         if (mediaPlayer.isPlaying) {
             mediaPlayer.stop()
             mediaPlayer.reset()
         }
-        if (mediaType == MEDIA_TYPE.PHOTO) {
-            surfaceView.isInvisible = true
-            appCompatImageView.isVisible = true
-            appCompatImageView.loadAndRotateImage(path)
-        } else {
-            appCompatImageView.isInvisible = true
-            surfaceView.isVisible = true
-            surfaceView.playVideo(path, mediaPlayer)
-        }
+    }
+
+    private fun loadPhoto(path: String) {
+        surfaceView.isInvisible = true
+        appCompatImageView.isVisible = true
+        appCompatImageView.loadAndRotateImage(path)
+    }
+
+    private fun loadVideo(path: String) {
+        appCompatImageView.isInvisible = true
+        surfaceView.isVisible = true
+        surfaceView.playVideo(path, mediaPlayer)
     }
 
     override fun setCurrentTime() {

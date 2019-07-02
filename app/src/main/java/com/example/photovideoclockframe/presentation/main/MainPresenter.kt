@@ -43,13 +43,16 @@ class MainPresenter(
 
     private fun initiateMediaChanges() {
         if (imagesChanging) return
+        var imageIndex = 0
         register(
             Observable.interval(DEFAULT_MEDIA_CHANGE_INTERVAL_SECONDS, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
+                .retry()
                 .subscribe({
-                    mediaPaths[(it % mediaPaths.size).toInt()].let { media ->
+                    mediaPaths[imageIndex].let { media ->
                         mainView.loadNewMedia(media.first, media.second)
                     }
+                    imageIndex = (imageIndex + 1) % mediaPaths.size
                 }, {
                     it.printStackTrace()
                 })
