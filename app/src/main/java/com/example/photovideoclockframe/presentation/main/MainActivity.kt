@@ -10,13 +10,14 @@ import com.example.photovideoclockframe.R
 import com.example.photovideoclockframe.presentation.base.BaseView
 import com.example.photovideoclockframe.presentation.extensions.loadAndRotateImage
 import com.example.photovideoclockframe.presentation.extensions.playVideo
-import com.example.photovideoclockframe.utility.MediaPathLoader
-import com.example.photovideoclockframe.utility.permissions.PermissionsManager
+import com.example.photovideoclockframe.presentation.main.di.DaggerMainComponent
+import com.example.photovideoclockframe.presentation.main.di.MainModule
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 class MainActivity : BaseView<MainContract.Presenter>(), MainContract.View {
 
-    override lateinit var presenter: MainContract.Presenter
+    @Inject override lateinit var presenter: MainContract.Presenter
     override val resolver: ContentResolver
         get() = this.contentResolver
 
@@ -24,12 +25,17 @@ class MainActivity : BaseView<MainContract.Presenter>(), MainContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        runOnUiThread { }
         makeActivityFullscreen()
         setContentView(R.layout.activity_main)
-        presenter = MainPresenter(this, PermissionsManager(this), MediaPathLoader()) //TODO Dagger
         createMenu()
         setOnClickListeners()
+    }
+
+    override fun createGraph() {
+        DaggerMainComponent.builder()
+            .mainModule(MainModule(this))
+            .build()
+            .inject(this)
     }
 
     private fun createMenu() {
@@ -39,8 +45,7 @@ class MainActivity : BaseView<MainContract.Presenter>(), MainContract.View {
             if (item?.itemId == R.id.settings) {
                 presenter.settingsClicked(this)
                 true
-            }
-            else false
+            } else false
         }
     }
 
@@ -63,7 +68,7 @@ class MainActivity : BaseView<MainContract.Presenter>(), MainContract.View {
         if (mediaType == MEDIA_TYPE.PHOTO) {
             loadPhoto(path)
         } else {
-           loadVideo(path)
+            loadVideo(path)
         }
     }
 

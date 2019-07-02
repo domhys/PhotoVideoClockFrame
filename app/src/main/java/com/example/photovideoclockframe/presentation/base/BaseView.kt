@@ -1,5 +1,6 @@
 package com.example.photovideoclockframe.presentation.base
 
+import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.photovideoclockframe.R
@@ -10,6 +11,13 @@ import com.google.android.material.snackbar.Snackbar
 abstract class BaseView<T : IBasePresenter> : AppCompatActivity(), IBaseView<T> {
 
     abstract override val presenter: T
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        createGraph()
+    }
+
+    abstract fun createGraph()
 
     override fun onStart() {
         super.onStart()
