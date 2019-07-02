@@ -43,17 +43,22 @@ class MainPresenter(
 
     private fun initiateMediaChanges() {
         mediaChangeDisposable?.dispose()
+        loadMedia()
         mediaChangeDisposable = Observable.interval(mediaChangeInterval, TimeUnit.SECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .retry()
             .subscribe({
-                mediaPathLoader.getNextMediaPath().let { media ->
-                    mainView.loadNewMedia(media.first, media.second)
-                }
+                loadMedia()
             }, {
                 it.printStackTrace()
             })
         mediaChangeDisposable?.let { register(it) }
+    }
+
+    private fun loadMedia() {
+        mediaPathLoader.getNextMediaPath().let { media ->
+            mainView.loadNewMedia(media.first, media.second)
+        }
     }
 
     override fun settingsClicked(context: Context) {
