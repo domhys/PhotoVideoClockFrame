@@ -24,13 +24,37 @@ class MainActivity : BaseView<MainContract.Presenter>(), MainContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        runOnUiThread {  }
-        hideToolbar()
+        runOnUiThread { }
+        makeActivityFullscreen()
         setContentView(R.layout.activity_main)
         presenter = MainPresenter(this, PermissionsManager(this), MediaPathLoader()) //TODO Dagger
+        createMenu()
+        setOnClickListeners()
     }
 
-    private fun hideToolbar() {
+    private fun createMenu() {
+        toolbar.inflateMenu(R.menu.settings_menu)
+        toolbar.setOnMenuItemClickListener { item ->
+            changeToolbarVisibility()
+            if (item?.itemId == R.id.settings) {
+                presenter.settingsClicked(this)
+                true
+            }
+            else false
+        }
+    }
+
+    private fun setOnClickListeners() {
+        snackBarContainer.setOnClickListener {
+            changeToolbarVisibility()
+        }
+    }
+
+    private fun changeToolbarVisibility() {
+        toolbar.isVisible = !toolbar.isVisible
+    }
+
+    private fun makeActivityFullscreen() {
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     }
 

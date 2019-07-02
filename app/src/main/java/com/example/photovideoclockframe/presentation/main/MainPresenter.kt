@@ -1,11 +1,14 @@
 package com.example.photovideoclockframe.presentation.main
 
+import android.app.AlertDialog
+import android.content.Context
 import com.example.photovideoclockframe.R
 import com.example.photovideoclockframe.presentation.base.BasePresenter
 import com.example.photovideoclockframe.utility.MediaPathLoader
 import com.example.photovideoclockframe.utility.permissions.PermissionsManager
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
 
 class MainPresenter(
@@ -14,9 +17,11 @@ class MainPresenter(
     private val mediaPathLoader: MediaPathLoader
 ) : BasePresenter(), MainContract.Presenter {
 
-    private val mediaPaths = mutableListOf<Pair<String,MEDIA_TYPE>>()
+    private val mediaPaths = mutableListOf<Pair<String, MEDIA_TYPE>>()
     private var clockTicking = false
-    private var imagesChanging = false
+    private var mediaChangeInterval = DEFAULT_MEDIA_CHANGE_INTERVAL_SECONDS
+    private var mediaChangeDisposable: Disposable? = null
+    private var imageIndex = 0
 
     override fun onBind() {
         mainView.setCurrentTime()
@@ -43,22 +48,41 @@ class MainPresenter(
     }
 
     private fun initiateMediaChanges() {
-        if (imagesChanging) return
-        var imageIndex = 0
-        register(
-            Observable.interval(DEFAULT_MEDIA_CHANGE_INTERVAL_SECONDS, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .retry()
-                .subscribe({
-                    mediaPaths[imageIndex].let { media ->
-                        mainView.loadNewMedia(media.first, media.second)
-                    }
-                    imageIndex = (imageIndex + 1) % mediaPaths.size
-                }, {
-                    it.printStackTrace()
-                })
-        )
-        imagesChanging = true
+        mediaChangeDisposable?.dispose()
+        mediaChangeDisposable = Observable.interval(mediaChangeInterval, TimeUnit.SECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .retry()
+            .subscribe({
+                mediaPaths[imageIndex].let { media ->
+                    mainView.loadNewMedia(media.first, media.second)
+                }
+                imageIndex = (imageIndex + 1) % mediaPaths.size
+            }, {
+                it.printStackTrace()
+            })
+        mediaChangeDisposable?.let { register(it) }
+    }
+
+    override fun settingsClicked(context: Context) {
+        createDisplayTimeDialog(context)
+    }
+
+    private fun createDisplayTimeDialog(context: Context) {
+        AlertDialog.Builder(context)
+            .setSingleChoiceItems(
+                R.array.duration_options, -1
+            ) { _, which ->
+                mediaChangeInterval = DEFAULT_MEDIA_CHANGE_INTERVAL_SECONDS + which
+            }
+            .setTitle(R.string.display_time_title)
+            .setCancelable(false)
+            .setPositiveButton(R.string.ok) { dialog, _ ->
+                initiateMediaChanges()
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
+            .create()
+            .show()
     }
 
     private inline fun doOrRequestReadPermissions(action: () -> Unit) {

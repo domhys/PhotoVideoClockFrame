@@ -2,4 +2,16 @@
     <string name="app_name">PhotoVideoClockFrame</string>
     <string name="ask_again">Ask Again</string>
     <string name="permission_needed">Permission needed</string>
+    <string name="settings">Settings</string>
+    <string name="display_time_title">How long should each item be displayed?</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+
+    <string-array name="duration_options">
+        <item>6 sec</item>
+        <item>7 sec</item>
+        <item>8 sec</item>
+        <item>9 sec</item>
+        <item>10 sec</item>
+    </string-array>
 </resources>

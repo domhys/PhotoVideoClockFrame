@@ -2,8 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/snackBarContainer"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/snackBarContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".presentation.main.MainActivity">
@@ -21,6 +21,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="invisible"/>
+
+    <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:id="@+id/toolbar"
+            android:background="@color/clock_background"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            android:animateLayoutChanges="true"
+            android:theme="@style/ToolbarTheme"
+            app:layout_constraintTop_toTopOf="parent"/>
 
     <!--todo fix width-->
     <com.example.photovideoclockframe.presentation.views.FrontAnalogClock
