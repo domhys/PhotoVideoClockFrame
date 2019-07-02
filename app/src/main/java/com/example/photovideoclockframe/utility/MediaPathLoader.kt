@@ -7,13 +7,23 @@ import com.example.photovideoclockframe.presentation.main.MEDIA_TYPE
 
 class MediaPathLoader {
 
-    fun loadMediaPaths(contentResolver: ContentResolver): ArrayList<Pair<String, MEDIA_TYPE>> {
-        val mediaPaths = ArrayList<Pair<String, MEDIA_TYPE>>()
-        mediaPaths.addAll(loadImagesPaths(contentResolver))
-//        mediaPaths.addAll(loadVideoPaths(contentResolver))
-        mediaPaths.shuffle()
-        return mediaPaths
+    private val mediaPaths = mutableListOf<Pair<String, MEDIA_TYPE>>()
+    private var imageIndex = 0
+
+    fun loadMediaPaths(contentResolver: ContentResolver) {
+        val paths = ArrayList<Pair<String, MEDIA_TYPE>>()
+        paths.addAll(loadImagesPaths(contentResolver))
+        paths.addAll(loadVideoPaths(contentResolver))
+        paths.shuffle()
+        mediaPaths.addAll(paths)
     }
+
+    fun getNextMediaPath() : Pair<String, MEDIA_TYPE> {
+        val result = mediaPaths[imageIndex]
+        imageIndex = (imageIndex + 1) % mediaPaths.size
+        return result
+    }
+
 
     private fun loadImagesPaths(contentResolver: ContentResolver): ArrayList<Pair<String, MEDIA_TYPE>> {
         return loadMediaPaths(
@@ -48,7 +58,7 @@ class MediaPathLoader {
             null
         )
         while (cursor?.moveToNext() == true) {
-            mediaPaths.add(Pair(cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA)),mediaType))
+            mediaPaths.add(Pair(cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA)), mediaType))
         }
         cursor?.close()
         return mediaPaths

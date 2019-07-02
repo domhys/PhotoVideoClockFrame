@@ -17,11 +17,9 @@ class MainPresenter(
     private val mediaPathLoader: MediaPathLoader
 ) : BasePresenter(), MainContract.Presenter {
 
-    private val mediaPaths = mutableListOf<Pair<String, MEDIA_TYPE>>()
     private var clockTicking = false
     private var mediaChangeInterval = DEFAULT_MEDIA_CHANGE_INTERVAL_SECONDS
     private var mediaChangeDisposable: Disposable? = null
-    private var imageIndex = 0
 
     override fun onBind() {
         mainView.setCurrentTime()
@@ -39,12 +37,8 @@ class MainPresenter(
     }
 
     private fun loadImages() {
-        loadImagesPaths()
+        mediaPathLoader.loadMediaPaths(mainView.resolver)
         initiateMediaChanges()
-    }
-
-    private fun loadImagesPaths() {
-        mediaPaths.addAll(mediaPathLoader.loadMediaPaths(mainView.resolver))
     }
 
     private fun initiateMediaChanges() {
@@ -53,10 +47,9 @@ class MainPresenter(
             .observeOn(AndroidSchedulers.mainThread())
             .retry()
             .subscribe({
-                mediaPaths[imageIndex].let { media ->
+                mediaPathLoader.getNextMediaPath().let { media ->
                     mainView.loadNewMedia(media.first, media.second)
                 }
-                imageIndex = (imageIndex + 1) % mediaPaths.size
             }, {
                 it.printStackTrace()
             })
@@ -100,7 +93,7 @@ class MainPresenter(
 
     companion object {
         private const val REQUEST_READ_PERMISSION_CODE = 412
-        private const val DEFAULT_MEDIA_CHANGE_INTERVAL_SECONDS = 2L
+        private const val DEFAULT_MEDIA_CHANGE_INTERVAL_SECONDS = 6L
     }
 }
 
