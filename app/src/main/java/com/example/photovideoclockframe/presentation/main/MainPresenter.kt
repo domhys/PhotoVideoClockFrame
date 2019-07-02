@@ -9,6 +9,7 @@ import com.example.photovideoclockframe.utility.permissions.PermissionsManager
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 class MainPresenter(
@@ -31,7 +32,7 @@ class MainPresenter(
         if (clockTicking) return
         register(
             Observable.interval(1, TimeUnit.SECONDS)
-                .subscribe({ mainView.setCurrentTime() }, {})
+                .subscribe({ mainView.setCurrentTime() }, Timber::e)
         )
         clockTicking = true
     }
@@ -47,11 +48,11 @@ class MainPresenter(
         mediaChangeDisposable = Observable.interval(mediaChangeInterval, TimeUnit.SECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .retry()
-            .subscribe({
-                loadMedia()
-            }, {
-                it.printStackTrace()
-            })
+            .subscribe(
+                {
+                    loadMedia()
+                }, Timber::e
+            )
         mediaChangeDisposable?.let { register(it) }
     }
 

@@ -2,6 +2,7 @@ package com.example.photovideoclockframe.presentation.extensions
 
 import android.media.MediaPlayer
 import android.view.SurfaceView
+import timber.log.Timber
 
 fun SurfaceView.playVideo(path: String, mediaPlayer: MediaPlayer) {
     mediaPlayer.apply {
@@ -13,6 +14,6 @@ fun SurfaceView.playVideo(path: String, mediaPlayer: MediaPlayer) {
                 start()
             }
             prepareAsync()
-        } catch (e: Exception) { /* TODO add timber logging */ }
+        } catch (e: Exception) { Timber.e(e) }
     }
 }
