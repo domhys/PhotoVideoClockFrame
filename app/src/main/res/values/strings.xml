@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PhotoVideoClockFrame</string>
+    <string name="ask_again">Ask Again</string>
+    <string name="permission_needed">Permission needed</string>
 </resources>

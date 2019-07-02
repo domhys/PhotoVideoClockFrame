@@ -1,5 +1,6 @@
 package com.example.photovideoclockframe.presentation.main
 
+import com.example.photovideoclockframe.R
 import com.example.photovideoclockframe.presentation.base.BasePresenter
 import com.example.photovideoclockframe.utility.MediaPathLoader
 import com.example.photovideoclockframe.utility.permissions.PermissionsManager
@@ -20,7 +21,7 @@ class MainPresenter(
     override fun onBind() {
         mainView.setCurrentTime()
         updateClockEverySecond()
-        doOrRequestReadPermissions { loadImages() } //TODO show toast if user doesn't grant permission
+        doOrRequestReadPermissions { loadImages() }
     }
 
     private fun updateClockEverySecond() {
@@ -70,6 +71,7 @@ class MainPresenter(
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (permissionsManager.readExternalStorageGranted()) loadImages()
+        else mainView.showErrorSnackBarWithAction(R.string.permission_needed) { doOrRequestReadPermissions { loadImages() } }
     }
 
     companion object {

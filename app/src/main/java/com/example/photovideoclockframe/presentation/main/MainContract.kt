@@ -10,6 +10,7 @@ interface MainContract {
         val resolver: ContentResolver
         fun setCurrentTime()
         fun loadNewMedia(path: String, mediaType: MEDIA_TYPE)
+        fun showErrorSnackBarWithAction(messageResId: Int, callback: () -> Unit)
     }
 
     interface Presenter: IBasePresenter {

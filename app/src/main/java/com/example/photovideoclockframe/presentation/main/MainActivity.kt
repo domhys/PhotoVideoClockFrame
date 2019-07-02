@@ -69,4 +69,8 @@ class MainActivity : BaseView<MainContract.Presenter>(), MainContract.View {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         presenter.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
+
+    override fun showErrorSnackBarWithAction(messageResId: Int, callback: () -> Unit) {
+        showSnackBarWithAction(snackBarContainer, getString(messageResId), action = callback)
+    }
 }
