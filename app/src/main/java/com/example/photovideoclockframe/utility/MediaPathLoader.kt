@@ -1,4 +1,4 @@
-package com.example.photovideoclockframe.utility.permissions
+package com.example.photovideoclockframe.utility
 
 import android.content.ContentResolver
 import android.net.Uri
@@ -10,7 +10,7 @@ class MediaPathLoader {
     fun loadMediaPaths(contentResolver: ContentResolver): ArrayList<Pair<String, MEDIA_TYPE>> {
         val mediaPaths = ArrayList<Pair<String, MEDIA_TYPE>>()
         mediaPaths.addAll(loadImagesPaths(contentResolver))
-        mediaPaths.addAll(loadVideoPaths(contentResolver))
+//        mediaPaths.addAll(loadVideoPaths(contentResolver))
         mediaPaths.shuffle()
         return mediaPaths
     }

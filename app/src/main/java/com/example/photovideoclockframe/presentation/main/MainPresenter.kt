@@ -1,7 +1,7 @@
 package com.example.photovideoclockframe.presentation.main
 
 import com.example.photovideoclockframe.presentation.base.BasePresenter
-import com.example.photovideoclockframe.utility.permissions.MediaPathLoader
+import com.example.photovideoclockframe.utility.MediaPathLoader
 import com.example.photovideoclockframe.utility.permissions.PermissionsManager
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -71,7 +71,7 @@ class MainPresenter(
 
     companion object {
         private const val REQUEST_READ_PERMISSION_CODE = 412
-        private const val DEFAULT_MEDIA_CHANGE_INTERVAL_SECONDS = 6L
+        private const val DEFAULT_MEDIA_CHANGE_INTERVAL_SECONDS = 2L
     }
 }
 

@@ -10,7 +10,7 @@ import com.example.photovideoclockframe.R
 import com.example.photovideoclockframe.presentation.base.BaseView
 import com.example.photovideoclockframe.presentation.extensions.loadAndRotateImage
 import com.example.photovideoclockframe.presentation.extensions.playVideo
-import com.example.photovideoclockframe.utility.permissions.MediaPathLoader
+import com.example.photovideoclockframe.utility.MediaPathLoader
 import com.example.photovideoclockframe.utility.permissions.PermissionsManager
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -24,6 +24,7 @@ class MainActivity : BaseView<MainContract.Presenter>(), MainContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        runOnUiThread {  }
         hideToolbar()
         setContentView(R.layout.activity_main)
         presenter = MainPresenter(this, PermissionsManager(this), MediaPathLoader()) //TODO Dagger
